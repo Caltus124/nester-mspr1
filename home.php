@@ -38,7 +38,7 @@ $user = $_SESSION['user'];
         <div class="menu_items">
           <ul class="menu_item">
             <div class="menu_title flex">
-              <span class="title">Tableau</span>
+              <span class="title">Dasboard</span>
               <span class="line"></span>
             </div>
             <li class="item">
@@ -48,7 +48,7 @@ $user = $_SESSION['user'];
               </a>
             </li>
             <li class="item">
-              <a href="home.php?page=map" class="link flex">
+              <a href="home.php?page=agents" class="link flex">
                 <i class='bx bx-map-alt' ></i>
                 <span>Agents</span>
               </a>
@@ -68,9 +68,9 @@ $user = $_SESSION['user'];
               <span class="line"></span>
             </div>
             <li class="item">
-              <a href="home.php?page=creationtickets" class="link flex">
+              <a href="home.php?page=deploy" class="link flex">
                 <i class="bx bx-grid-alt"></i>
-                <span>Déploiement</span>
+                <span>Deploy</span>
               </a>
             </li>
             <li class="item">
@@ -106,19 +106,19 @@ $user = $_SESSION['user'];
 
           <ul class="menu_item">
             <div class="menu_title flex">
-              <span class="title">Autres</span>
+              <span class="title">Auther</span>
               <span class="line"></span>
             </div>
             <li class="item">
               <a href="home.php?page=parametres" class="link flex">
                 <i class="bx bx-cog"></i>
-                <span>Paramètres</span>
+                <span>Settings</span>
               </a>
             </li>
             <li class="item">
               <a href="logout.php" class="link flex">
                 <i class='bx bx-exit'></i>
-                <span>Deconnexion</span>
+                <span>Log out</span>
               </a>
             </li>
           </ul>

@@ -51,7 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 </head>
 <body>
-    <form action="./index.php" method="post">
+    <form action="./index.php" method="post" autocomplete="off">
         <h2>Login</h2><br>
         <label for="username">Nom d'utilisateur :</label>
         <input type="text" id="username" name="username" required autocomplete="off"><br>

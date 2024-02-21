@@ -11,7 +11,6 @@ $successMessage = '';
 $errorMessage = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    var_dump($_POST);
 
     if (isset($_POST['delete_user'])) {
         $userIdToDelete = $_POST['delete_user'];
@@ -204,7 +203,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     #btn {
-        background-color: #007BFF;
+        background-color: #4070f4;
         color: #fff;
         padding: 10px 15px;
         border: none;

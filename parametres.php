@@ -54,6 +54,34 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
     }
 }
+
+
+
+// Fonction pour démarrer l'écouteur
+function startListener() {
+    $_SESSION['listener_status'] = 'active';
+    exec('nohup php ecouteur.php > log.txt 2>&1 &');
+}
+
+// Fonction pour arrêter l'écouteur
+function stopListener() {
+    unset($_SESSION['listener_status']);
+    // Vous pouvez ajouter ici du code pour terminer le processus de l'écouteur
+}
+
+// Vérifier si l'écouteur est actif
+$listenerActive = isset($_SESSION['listener_status']);
+
+// Vérifier si le bouton de démarrage a été cliqué
+if (isset($_GET['start_listener'])) {
+    startListener();
+}
+
+// Vérifier si le bouton d'arrêt a été cliqué
+if (isset($_GET['stop_listener'])) {
+    stopListener();
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -100,10 +128,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             display: none;
         }
 
-        input[type="submit"] {
+        input[type="submit"], button{
             display: block;
             padding: 10px;
-            background-color: #007BFF;
+            background-color: #4070f4;
             color: #fff;
             border: none;
             border-radius: 5px;
@@ -111,7 +139,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             cursor: pointer;
         }
 
-        input[type="submit"]:hover {
+        input[type="submit"]:hover, button:hover {
             background-color: #0056b3;
         }
 
@@ -195,14 +223,50 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <input type="submit" value="Modifier le mot de passe">
 </form>
 
+<h1>Gestion de l'écouteur</h1>
+<form action="start_listener.php" method="get">
+    <input type="hidden" name="start_listener" value="true">
+    <input type="submit" value="Démarrer l'écouteur">
+</form>
 
+<?php
+if (isset($_SESSION['user'])) {
+    // Connexion à la base de données SQLite (à adapter selon votre configuration)
+    $dbFile = './database/nester.db';
+    $database = new SQLite3($dbFile);
 
-    <h1>Supprimer Base De Données</h1>
+    // Récupérer le statut de l'utilisateur depuis la base de données
+    $username = $_SESSION['user'];
+    $query = $database->prepare('SELECT status FROM user WHERE username = :username');
+    $query->bindValue(':username', $username, SQLITE3_TEXT);
+    $result = $query->execute();
+    $userData = $result->fetchArray(SQLITE3_ASSOC);
 
+    // Vérifier si la requête a réussi et si le statut est 'admin'
+    if ($userData && $userData['status'] === 'admin') {
+        // L'utilisateur est un administrateur, affichez le lien "Utilisateurs"
+        echo '<h1 style="color: red;">Zone dangereuse</h1>';
 
-    <form action="create_user_db.php" method="get">
-        <button type="submit" class="btn-red">Table utilisateur</button>
-    </form>
+        echo '<form action="create_user_db.php" method="get">';
+        echo '<p>Base de données des users</p><br>';
+        echo '<button type="submit" class="btn-red">Supprimer</button>';
+        echo '</form><br>';
+        
+        echo '<form action="create_scan_db.php" method="get">';
+        echo '<p>Base de données des scans</p><br>';
+        echo '<button type="submit" class="btn-red">Supprimer</button>';
+        echo '</form><br>';
+
+        echo '<form action="check_db.php" method="get">';
+        echo '<p>Vérifier la base de donnée</p><br>';
+        echo '<button type="submit">Vérifier</button>';
+        echo '</form><br>';
+    }
+
+    // Fermer la connexion à la base de données
+    $database->close();
+}
+?>
 
 </div>
 
