@@ -121,7 +121,22 @@ try {
         echo '<button type="submit">Retour</button>';
         echo '</form><br>';
     ?>
-
+    
     <div id="tables-container"></div>
+
+    <script>
+        const refreshTimer = document.getElementById('refresh-timer');
+
+        // let timerInSeconds = 0;
+
+        // setInterval(() => {
+        // timerInSeconds += 1;
+
+        // if (timerInSeconds >= 2) {
+        //     window.location.reload();
+        // }
+        // }, 1000);
+    </script>
+
 </body>
 </html>

@@ -1,7 +1,7 @@
 <?php
 // Adresse IP et port à écouter
 $address = '0.0.0.0';
-$port = 5556;
+$port = 6002;
 
 // Chemin vers la base de données SQLite
 $db_path = './database/nester.db';
@@ -57,12 +57,41 @@ try {
         // Décoder les données JSON
         $data = json_decode($input, true);
 
+        // Initialiser l'ID de la machine à null
+        $machineId = null;
+
         // Insérer les données dans les tables respectives
         foreach ($data as $table => $tableData) {
-            $keys = implode(", ", array_keys($tableData));
-            $values = "'" . implode("', '", array_values($tableData)) . "'";
-            $db->exec("INSERT INTO $table ($keys) VALUES ($values)");
+            if ($table === 'machine') {
+                // Vérifier si le nom existe déjà dans la table machine
+                $existingMachine = $db->prepare("SELECT id FROM machine WHERE nom = :nom");
+                $existingMachine->execute([':nom' => $tableData['nom']]);
+                $machineId = $existingMachine->fetchColumn();
+                
+                if (!$machineId) {
+                    // Le nom n'existe pas, insérer une nouvelle ligne dans la table machine
+                    $keys = implode(", ", array_keys($tableData));
+                    $values = "'" . implode("', '", array_values($tableData)) . "'";
+                    $db->exec("INSERT INTO $table ($keys) VALUES ($values)");
+                    // Récupérer l'ID de la machine nouvellement insérée
+                    $machineId = $db->lastInsertId();
+                }
+            }
         }
+
+        // Insérer les données dans la table performances
+        if ($machineId) {
+            $performancesData = $data['performances'];
+            $performancesData['machine_id'] = $machineId;
+            
+            $keys = implode(", ", array_keys($performancesData));
+            $values = "'" . implode("', '", array_values($performancesData)) . "'";
+            $db->exec("INSERT INTO performances ($keys) VALUES ($values)");
+        }
+
+
+
+
 
         // Fermer le socket client
         socket_close($clientSocket);

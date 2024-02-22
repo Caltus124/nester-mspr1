@@ -259,7 +259,7 @@ if (isset($_SESSION['user'])) {
 
         echo '<form action="check_db.php" method="get">';
         echo '<p>Vérifier la base de donnée</p><br>';
-        echo '<button type="submit">Vérifier</button>';
+        echo '<button type="submit" class="btn-red">Vérifier</button>';
         echo '</form><br>';
     }
 
