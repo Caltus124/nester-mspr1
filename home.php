@@ -53,13 +53,13 @@ $user = $_SESSION['user'];
                 <span>Agents</span>
               </a>
               </li>
-            <li class="item">
+            <!-- <li class="item">
               <a href="home.php?page=statistiques" class="link flex">
                 <i class='bx bx-stats' ></i>
                 <span>Statistiques</span>
               </a>
               </li>
-            </li>
+            </li> -->
           </ul>
 
           <ul class="menu_item">

@@ -226,7 +226,7 @@ if (isset($_GET['stop_listener'])) {
 <h1>Gestion de l'écouteur</h1>
 <form action="start_listener.php" method="get">
     <input type="hidden" name="start_listener" value="true">
-    <input type="submit" value="Démarrer l'écouteur">
+    <input type="submit" value="Restart écouteur">
 </form>
 
 <?php

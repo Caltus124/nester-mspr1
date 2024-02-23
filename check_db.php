@@ -9,7 +9,7 @@ if (!isset($_SESSION['user'])) {
 // Chemin vers la base de données SQLite
 $db_path = './database/nester.db';
 
-$tables = ['machine', 'performances', 'test', 'machine_list', 'wan_latency'];
+$tables = ['system_info', 'performances', 'ping_result', 'network_host', 'wan_latency'];
 
 // Tableau pour stocker les données de chaque table
 $tableData = [];
@@ -81,7 +81,7 @@ try {
 
         // Actualiser les données de toutes les tables toutes les 5 secondes (5000 millisecondes)
         function loadAllRealtimeData() {
-            var tables = ['machine', 'performances', 'test', 'machine_list', 'wan_latency'];
+            var tables = ['system_info', 'performances', 'ping_result', 'network_host', 'wan_latency'];
             tables.forEach(function(table) {
                 loadRealtimeData(table);
             });
@@ -91,7 +91,7 @@ try {
         window.onload = function() {
             // Afficher les tables une seule fois avec leurs données
             var tableData = <?php echo json_encode($tableData); ?>;
-            var tables = ['machine', 'performances', 'test', 'machine_list', 'wan_latency'];
+            var tables = ['system_info', 'performances', 'ping_result', 'network_host', 'wan_latency'];
             tables.forEach(function(table) {
                 var html = "<h2>Table " + table + "</h2><table class='data-table' id='" + table + "'>";
                 html += "<thead><tr>";
@@ -120,6 +120,8 @@ try {
         echo '<form action="home.php?page=parametres" method="get">';
         echo '<button type="submit">Retour</button>';
         echo '</form><br>';
+
+        echo 'Aujourd\'hui : '. time();
     ?>
     
     <div id="tables-container"></div>
