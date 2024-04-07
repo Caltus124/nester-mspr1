@@ -1,6 +1,6 @@
 <?php
 // Connexion à la base de données
-$db = new PDO('sqlite:your_database.db');
+$db = new PDO('sqlite:database/nester.db');
 $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
 // Récupération de toutes les adresses IP de la table system_info
@@ -31,6 +31,6 @@ while (true) {
     foreach ($ip_addresses as $ip) {
         keepAlive($ip, $db);
     }
-    sleep(120); // Attente de 10 secondes avant la prochaine itération
+    sleep(5); // Attente de 10 secondes avant la prochaine itération
 }
 ?>
