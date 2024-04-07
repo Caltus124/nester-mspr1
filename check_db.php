@@ -9,7 +9,7 @@ if (!isset($_SESSION['user'])) {
 // Chemin vers la base de données SQLite
 $db_path = './database/nester.db';
 
-$tables = ['system_info', 'performances', 'ping_result', 'network_host', 'wan_latency'];
+$tables = ['system_info', 'performances', 'ping_result', 'network_host', 'tcp_port', 'wan_latency', 'tcp_port'];
 
 // Tableau pour stocker les données de chaque table
 $tableData = [];
@@ -65,7 +65,7 @@ try {
         function loadRealtimeData(table) {
             var xhr = new XMLHttpRequest();
             xhr.onreadystatechange = function() {
-                if (xhr.readyState == 4) {
+                if (xhr.readyState == 5) {
                     if (xhr.status == 200) {
                         console.log('Données reçues pour la table ' + table + ':');
                         console.log(xhr.responseText);
@@ -81,7 +81,7 @@ try {
 
         // Actualiser les données de toutes les tables toutes les 5 secondes (5000 millisecondes)
         function loadAllRealtimeData() {
-            var tables = ['system_info', 'performances', 'ping_result', 'network_host', 'wan_latency'];
+            var tables = ['system_info', 'performances', 'ping_result', 'network_host', 'tcp_port', 'wan_latency', 'tcp_port'];
             tables.forEach(function(table) {
                 loadRealtimeData(table);
             });
@@ -91,7 +91,7 @@ try {
         window.onload = function() {
             // Afficher les tables une seule fois avec leurs données
             var tableData = <?php echo json_encode($tableData); ?>;
-            var tables = ['system_info', 'performances', 'ping_result', 'network_host', 'wan_latency'];
+            var tables = ['system_info', 'performances', 'ping_result', 'network_host', 'tcp_port', 'wan_latency', 'tcp_port'];
             tables.forEach(function(table) {
                 var html = "<h2>Table " + table + "</h2><table class='data-table' id='" + table + "'>";
                 html += "<thead><tr>";

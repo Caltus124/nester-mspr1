@@ -23,6 +23,8 @@ try {
     $db->exec('DROP TABLE IF EXISTS system_info');
     $db->exec('DROP TABLE IF EXISTS ping_result');
     $db->exec('DROP TABLE IF EXISTS network_host');
+    $db->exec('DROP TABLE IF EXISTS tcp_port');
+
 
     // Création de la table machine
     $db->exec('CREATE TABLE IF NOT EXISTS system_info (
@@ -31,11 +33,12 @@ try {
         machine_name VARCHAR(50) NOT NULL,
         os_info VARCHAR(50) NOT NULL,
         status_machine VARCHAR(50) NOT NULL,
-        date_time VARCHAR(50) NOT NULL
+        date_time VARCHAR(50) NOT NULL,
+        mac_address VARCHAR(50) NOT NULL
     )');
 
     // Insertion de données de test dans la table machine
-    $db->exec("INSERT INTO system_info (ip_address, machine_name, os_info, status_machine, date_time) VALUES ('127.0.0.1', 'Nester', 'Linux', 'enable', '1708592885')");
+    $db->exec("INSERT INTO system_info (ip_address, machine_name, os_info, status_machine, date_time, mac_address) VALUES ('127.0.0.1', 'Nester', 'Linux', 'enable', '1708592885', '3a:74:e9:d2:a4:49')");
     // Ajoutez d'autres insertions pour remplir la table avec plus de données si nécessaire
 
     // Création de la table performances
@@ -95,16 +98,7 @@ try {
     $hosts = [
         "192.168.1.1",
         "192.168.1.10",
-        "192.168.1.100",
-        "192.168.1.11",
-        "192.168.1.117",
-        "192.168.1.137",
-        "192.168.1.17",
-        "192.168.1.18",
-        "192.168.1.21",
-        "192.168.1.53",
-        "192.168.1.54",
-        "192.168.1.90"
+        "192.168.1.100"
     ];
 
 
@@ -113,13 +107,65 @@ try {
     }
 
 
-
-
     // Création de la table wan_latency
     $db->exec('CREATE TABLE IF NOT EXISTS wan_latency (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         latency FLOAT
     )');
+
+    // Création de la table tcp_port
+    $db->exec('CREATE TABLE IF NOT EXISTS tcp_port (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        machine_id INTEGER,
+        ip_address VARCHAR(15) NOT NULL,
+        port INTEGER NOT NULL,
+        state_tcp VARCHAR(50) NOT NULL,
+        reason VARCHAR(50) NOT NULL,
+        name_tcp VARCHAR(50) NOT NULL,
+        product VARCHAR(50) NOT NULL,
+        version_tcp VARCHAR(50) NOT NULL,
+        extrainfo VARCHAR(50) NOT NULL,
+        conf INTEGER NOT NULL,
+        cpe VARCHAR(50) NOT NULL
+    )');
+
+    // Insertion des données dans la table tcp_port
+    $data_tcp_port = array(
+        array('ip_address' => '192.168.1.1', 'port' => 20, 'state' => 'filtered', 'reason' => 'no-response', 'name' => 'ftp-data', 'product' => '', 'version' => '', 'extrainfo' => '', 'conf' => 3, 'cpe' => ''),
+        array('ip_address' => '192.168.1.1', 'port' => 21, 'state' => 'filtered', 'reason' => 'no-response', 'name' => 'ftp', 'product' => '', 'version' => '', 'extrainfo' => '', 'conf' => 3, 'cpe' => ''),
+        // Ajoutez d'autres données d'insertion ici
+    );
+
+    foreach ($data_tcp_port as $row) {
+        $stmt = $db->prepare('INSERT INTO tcp_port (
+            ip_address,
+            machine_id,
+            port,
+            state_tcp,
+            reason,
+            name_tcp,
+            product,
+            version_tcp,
+            extrainfo,
+            conf,
+            cpe
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
+        $stmt->execute(array(
+            $row['ip_address'],
+            1,
+            $row['port'],
+            $row['state'],
+            $row['reason'],
+            $row['name'],
+            $row['product'],
+            $row['version'],
+            $row['extrainfo'],
+            $row['conf'],
+            $row['cpe']
+        ));
+    }
+
+
 
     header("Location: home.php?page=parametres&?msg=table-supprime");
     exit();

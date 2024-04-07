@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -51,6 +52,7 @@
                     if($agent) {
                         $agentNom = htmlspecialchars($agent['machine_name']);
                         $agentIP = htmlspecialchars($agent['ip_address']);
+                        $mac_address = htmlspecialchars($agent['mac_address']);
                     } else {
                         echo "Aucun agent trouvé avec cet identifiant.";
                     }
@@ -112,11 +114,59 @@
                     return "high-usage";
                 }
             }
+            if (isset($_GET['ids'])) {
+                $machine_id = $_GET['ids'];
+            
+                // Requête pour récupérer les données de performances en fonction de l'ID de la machine
+                $stmt = $db->prepare('SELECT * FROM performances WHERE machine_id = :id');
+                $stmt->bindParam(':id', $machine_id);
+                $stmt->execute();
+            
+                $timestamps_ram = [];
+                $ramPercentages = [];
+                $storagePercentages = [];
+                $cpuPercentages = [];
+                
+                while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                    $ram_used = $row['ram_used'];
+                    $ram_total = $row['ram_total'];
+                    $ram_free = $row['ram_free'];
+                    $date_time_unix = $row['date_time'];
         
+                    $storage_used = $row['storage_used'];
+                    $storage_total = $row['storage_total'];
+                    $storage_free = $row['storage_free'];
+                    $cpu = $row['cpu_usage'];
+                    // Convertir le timestamp Unix en date/heure au format UTC
+                    $formatted_date_time = gmdate('Y-m-d H:i:s', $date_time_unix);
+                
+                    $ram_percentage = ($ram_used / $ram_total) * 100;
+                    $storage_percentage = ($storage_used / $storage_total) * 100;
+        
+                    // Conversion en GB
+                    $storage_total_gb = round($storage_total / (1024 * 1024 * 1024), 2);
+                    $ram_total_gb = round($ram_total / (1024 * 1024 * 1024), 2);
+
+                    $storage_used_gb = round($storage_used / (1024 * 1024 * 1024), 2);
+                    $ram_used_gb = round($ram_used / (1024 * 1024 * 1024), 2);
+        
+                    // Ajouter les valeurs aux tableaux
+                    array_push($timestamps_ram, $formatted_date_time);
+                    array_push($ramPercentages, round($ram_percentage, 2));
+                    array_push($storagePercentages, round($storage_percentage, 2));
+                    array_push($cpuPercentages, $cpu);
+        
+                }
+        
+        
+            } else {
+                echo "ID de la machine non fourni en paramètre GET.";
+            }
             ?>
             <!-- PHP code ends here -->
             <p style="color: #4070f4;"><?php echo $agentIP; ?></p>
             <p><?php echo $agentNom; ?></p>
+            <p style="color: gray; font-size: 1em;"><?php echo $mac_address; ?></p>
             <!-- Ajouter d'autres informations si nécessaire -->
         </div>
         <?php 
@@ -127,7 +177,13 @@
             echo '<img src="' . $logo_path . '" alt="' . $type_os . '">';
             echo '</div>';
         }
+
         ?>
+        <div class="agent-info">
+            <p>Stockage : <?php echo $storage_total_gb; ?>GB</p>
+            <p>RAM : <?php echo $ram_total_gb; ?>GB</p>
+            <p style="color: gray; font-size: 1em;">Dernier scan : <?php echo $formatted_date_time; ?></p>
+        </div>
     </div>
     <div class="performance-info">
         <div class="performance-box">
@@ -156,9 +212,10 @@
         </div>
     </div>
     <div class="chart-container1">
-        <canvas id="storageChart" width="150" height="150"></canvas>
-        <canvas id="ramChart" width="150" height="150"></canvas>
-        <canvas id="cpuChart" width="150" height="150"></canvas>
+        <canvas id="progressCanvas" width="400" height="400"></canvas>
+        <canvas id="storageChart" width="400" height="400"></canvas>
+        <canvas id="ramChart" width="400" height="400"></canvas>
+        <canvas id="cpuChart" width="400" height="400"></canvas>
     </div>
     <div class="chart-container2">
         <canvas id="ramChart2" width="200" height="80%"></canvas>
@@ -169,50 +226,62 @@
     <div class="chart-container2">
         <canvas id="cpu" width="200" height="80%"></canvas>
     </div>
-    <?php
-    if (isset($_GET['ids'])) {
-        $machine_id = $_GET['ids'];
-    
-        // Requête pour récupérer les données de performances en fonction de l'ID de la machine
-        $stmt = $db->prepare('SELECT * FROM performances WHERE machine_id = :id');
-        $stmt->bindParam(':id', $machine_id);
-        $stmt->execute();
-    
-        $timestamps_ram = [];
-        $ramPercentages = [];
-        $storagePercentages = [];
-        $cpuPercentages = [];
-        
-        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            $ram_used = $row['ram_used'];
-            $ram_total = $row['ram_total'];
-            $ram_free = $row['ram_free'];
-            $date_time_unix = $row['date_time'];
-
-            $storage_used = $row['storage_used'];
-            $storage_total = $row['storage_total'];
-            $storage_free = $row['storage_free'];
-            $cpu = $row['cpu_usage'];
-            // Convertir le timestamp Unix en date/heure au format UTC
-            $formatted_date_time = gmdate('Y-m-d H:i:s', $date_time_unix);
-        
-            $ram_percentage = ($ram_used / $ram_total) * 100;
-            $storage_percentage = ($storage_used / $storage_total) * 100;
-
-            // Ajouter les valeurs aux tableaux
-            array_push($timestamps_ram, $formatted_date_time);
-            array_push($ramPercentages, round($ram_percentage, 2));
-            array_push($storagePercentages, round($storage_percentage, 2));
-            array_push($cpuPercentages, $cpu);
-
-        }
-
-
-    } else {
-        echo "ID de la machine non fourni en paramètre GET.";
-    }
-    ?>
     <script>
+    //////////////////////////////////////////////
+    var storageUsage = <?php echo $storage_percent; ?>;
+    var storageFree = 100 - storageUsage;
+
+    var ramUsage = <?php echo $ram_percent; ?>;
+    var ramFree = 100 - ramUsage;
+
+    var cpuUsage = <?php echo $cpu_usage; ?>;
+
+    var canvas = document.getElementById('progressCanvas');
+    var context = canvas.getContext('2d');
+
+    // Dessiner la barre de progression pour le stockage
+    context.fillStyle = 'lightgrey';
+    context.fillRect(0, 70, canvas.width, 40);
+
+    var storageBarWidth = (storageUsage / 100) * canvas.width;
+    context.fillStyle = '#36A2EB';
+    context.fillRect(0, 70, storageBarWidth, 40);
+
+    // Dessiner la barre de progression pour la RAM
+    context.fillStyle = 'lightgrey';
+    context.fillRect(0, 150, canvas.width, 40);
+
+    var ramBarWidth = (ramUsage / 100) * canvas.width;
+    context.fillStyle = '#FFCE56';
+    context.fillRect(0, 150, ramBarWidth, 40);
+
+    // Dessiner la barre de progression pour le CPU
+    context.fillStyle = 'lightgrey';
+    context.fillRect(0, 230, canvas.width, 40);
+
+    var cpuBarWidth = (cpuUsage / 100) * canvas.width;
+    context.fillStyle = '#FF5733';
+    context.fillRect(0, 230, cpuBarWidth, 40);
+
+    // Définir le style de texte
+    context.fillStyle = 'black';
+    context.font = '25px Arial';
+    context.textAlign = 'center';
+
+    // Afficher le texte pour le stockage au centre du canvas
+    context.fillText('Stockage : ' + <?php echo $storage_used_gb; ?> + 'GB / ' + <?php echo $storage_total_gb; ?> + 'GB ', canvas.width / 2, 60);
+
+    // Afficher le texte pour la RAM au centre du canvas
+    context.fillText('RAM : ' + <?php echo $ram_used_gb; ?> + 'GB / ' + <?php echo $ram_total_gb; ?> + 'GB ', canvas.width / 2, 140);
+
+    // Afficher le texte pour le CPU au centre du canvas
+    context.fillText('CPU : ' + <?php echo $cpu_usage; ?> + '% / 100%', canvas.width / 2, 220);
+
+    //$data_time_utc = gmdate('Y-m-d H:i:s', $date_time_unix);
+
+    
+
+    //////////////////////////////////////////////
     // Données du graphique pour la RAM
     var ramUsage = <?php echo $ram_percent; ?>;
     var ramFree = 100 - ramUsage;
@@ -246,7 +315,6 @@
                     size: 32,
                     weight: 'bold'
                 },
-                padding: 40
             }
         }
     };
@@ -292,7 +360,6 @@
                     size: 32,
                     weight: 'bold'
                 },
-                padding: 40
             }
         }
     };
@@ -340,7 +407,6 @@
                     size: 32,
                     weight: 'bold'
                 },
-                padding: 40
             }
         }
     };
@@ -352,7 +418,6 @@
         data: storageData,
         options: storageOptions
     });
-
 
     // RAM LINE GRAF
     
@@ -478,6 +543,38 @@
             margin: 0;
             padding: 0;
             margin-left: 270px;
+            overflow-x: hidden;
+        }
+        .progress-bar {
+            margin-bottom: 20px;
+        }
+
+        .progress-bar h2 {
+            margin-bottom: 5px;
+        }
+
+        .progress {
+            height: 20px;
+            background-color: lightgrey;
+            border-radius: 5px;
+            position: relative;
+        }
+
+        .progress::after {
+            content: '';
+            display: block;
+            height: 100%;
+            width: 100%;
+            background-color: #36A2EB;
+            border-radius: 5px;
+        }
+
+        .percent {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            color: black;
         }
 
         .container {
@@ -560,13 +657,18 @@
         }
         .chart-container1 {
             display: flex;
+            flex-wrap: wrap;
             justify-content: space-around;
-            max-width: 500px;
-            margin: 0 auto; 
             max-width: 90%;
+            margin: 0 auto;
             height: 30em;
-            margin-bottom: 100px;
+            margin-bottom: 580px;
             margin-top: 50px;
+        }
+
+        .chart-container1 > * {
+            flex-basis: 45%; /* Ajustez cette valeur en fonction de vos besoins */
+            margin-bottom: 50px; /* Espace entre les éléments */
         }
         .chart-container2 {
             display: flex;
@@ -574,15 +676,13 @@
             max-width: 500px;
             margin: 0 auto; 
             max-width: 90%;
-            height: 36.5em;
-            margin-bottom: 100px;
-            margin-top: 50px;
+            margin-bottom: 50px;
         }
         canvas {
             background-color: white;
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            padding-bottom: 20px;
+            padding: 50px;
         }
     </style>
 </body>

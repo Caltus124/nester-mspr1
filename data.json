@@ -1,0 +1,352 @@
+{
+    "system_info": [
+        {
+            "cpu_usage": 24.9,
+            "ram_info": {
+                "total": 8589934592,
+                "used": 1165732864,
+                "free": 87490560
+            },
+            "storage_info": {
+                "total": 474404847616,
+                "used": 10122203136,
+                "free": 19832930304
+            },
+            "machine_name": "pc-lol2",
+            "os_info": "Windows",
+            "ip_address": "192.168.1.242",
+            "mac_address": "3a:74:e9:d2:a4:49"
+        }
+    ],
+    "ping_result": [
+        {
+            "timestamp": 1708675417.612751,
+            "host": "1.1.1.1",
+            "result": 0.0056362152099609375
+        }
+    ],
+    "network_host": [
+        {
+            "timestamp": 1708675417.3973482,
+            "hosts": [
+                "192.168.1.1",
+                "192.168.1.10",
+                "192.168.1.100",
+                "192.168.1.1",
+                "192.168.1.10",
+                "192.168.1.100",
+                "192.168.1.1"
+            ]
+        }
+    ],
+    "tcp_port": [
+        {
+          "nmap": {
+            "command_line": "nmap -oX - -p 20-23,25,53,67-69,80,110,123,143,389,443,500,554,636,1352,1433,1723,3306,3389,5432,6667,27015,27030 -sV 192.168.1.1",
+            "scaninfo": {
+              "tcp": {
+                "method": "connect",
+                "services": "20-23,25,53,67-69,80,110,123,143,389,443,500,554,636,1352,1433,1723,3306,3389,5432,6667,27015,27030"
+              }
+            },
+            "scanstats": {
+              "timestr": "Tue Feb 27 13:33:23 2024",
+              "elapsed": "162.31",
+              "uphosts": "1",
+              "downhosts": "0",
+              "totalhosts": "1"
+            }
+          },
+          "scan": {
+            "192.168.1.1": {
+              "hostnames": [
+                {
+                  "name": "la_passerelle",
+                  "type": "PTR"
+                }
+              ],
+              "addresses": {
+                "ipv4": "192.168.1.1"
+              },
+              "vendor": {},
+              "status": {
+                "state": "up",
+                "reason": "syn-ack"
+              },
+              "tcp": {
+                "20": {
+                  "state": "filtered",
+                  "reason": "no-response",
+                  "name": "ftp-data",
+                  "product": "",
+                  "version": "",
+                  "extrainfo": "",
+                  "conf": "3",
+                  "cpe": ""
+                },
+                "21": {
+                  "state": "filtered",
+                  "reason": "no-response",
+                  "name": "ftp",
+                  "product": "",
+                  "version": "",
+                  "extrainfo": "",
+                  "conf": "3",
+                  "cpe": ""
+                },
+                "22": {
+                  "state": "filtered",
+                  "reason": "no-response",
+                  "name": "ssh",
+                  "product": "",
+                  "version": "",
+                  "extrainfo": "",
+                  "conf": "3",
+                  "cpe": ""
+                },
+                "23": {
+                  "state": "filtered",
+                  "reason": "no-response",
+                  "name": "telnet",
+                  "product": "",
+                  "version": "",
+                  "extrainfo": "",
+                  "conf": "3",
+                  "cpe": ""
+                },
+                "25": {
+                  "state": "filtered",
+                  "reason": "no-response",
+                  "name": "smtp",
+                  "product": "",
+                  "version": "",
+                  "extrainfo": "",
+                  "conf": "3",
+                  "cpe": ""
+                },
+                "53": {
+                  "state": "open",
+                  "reason": "syn-ack",
+                  "name": "domain",
+                  "product": "",
+                  "version": "",
+                  "extrainfo": "",
+                  "conf": "3",
+                  "cpe": ""
+                },
+                "67": {
+                  "state": "filtered",
+                  "reason": "no-response",
+                  "name": "dhcps",
+                  "product": "",
+                  "version": "",
+                  "extrainfo": "",
+                  "conf": "3",
+                  "cpe": ""
+                },
+                "68": {
+                  "state": "filtered",
+                  "reason": "no-response",
+                  "name": "dhcpc",
+                  "product": "",
+                  "version": "",
+                  "extrainfo": "",
+                  "conf": "3",
+                  "cpe": ""
+                },
+                "69": {
+                  "state": "filtered",
+                  "reason": "no-response",
+                  "name": "tftp",
+                  "product": "",
+                  "version": "",
+                  "extrainfo": "",
+                  "conf": "3",
+                  "cpe": ""
+                },
+                "80": {
+                  "state": "open",
+                  "reason": "syn-ack",
+                  "name": "http",
+                  "product": "",
+                  "version": "",
+                  "extrainfo": "",
+                  "conf": "10",
+                  "cpe": ""
+                },
+                "110": {
+                  "state": "filtered",
+                  "reason": "no-response",
+                  "name": "pop3",
+                  "product": "",
+                  "version": "",
+                  "extrainfo": "",
+                  "conf": "3",
+                  "cpe": ""
+                },
+                "123": {
+                  "state": "filtered",
+                  "reason": "no-response",
+                  "name": "ntp",
+                  "product": "",
+                  "version": "",
+                  "extrainfo": "",
+                  "conf": "3",
+                  "cpe": ""
+                },
+                "143": {
+                  "state": "filtered",
+                  "reason": "no-response",
+                  "name": "imap",
+                  "product": "",
+                  "version": "",
+                  "extrainfo": "",
+                  "conf": "3",
+                  "cpe": ""
+                },
+                "389": {
+                  "state": "filtered",
+                  "reason": "no-response",
+                  "name": "ldap",
+                  "product": "",
+                  "version": "",
+                  "extrainfo": "",
+                  "conf": "3",
+                  "cpe": ""
+                },
+                "443": {
+                  "state": "open",
+                  "reason": "syn-ack",
+                  "name": "https",
+                  "product": "",
+                  "version": "",
+                  "extrainfo": "",
+                  "conf": "10",
+                  "cpe": ""
+                },
+                "500": {
+                  "state": "filtered",
+                  "reason": "no-response",
+                  "name": "isakmp",
+                  "product": "",
+                  "version": "",
+                  "extrainfo": "",
+                  "conf": "3",
+                  "cpe": ""
+                },
+                "554": {
+                  "state": "filtered",
+                  "reason": "no-response",
+                  "name": "rtsp",
+                  "product": "",
+                  "version": "",
+                  "extrainfo": "",
+                  "conf": "3",
+                  "cpe": ""
+                },
+                "636": {
+                  "state": "filtered",
+                  "reason": "no-response",
+                  "name": "ldapssl",
+                  "product": "",
+                  "version": "",
+                  "extrainfo": "",
+                  "conf": "3",
+                  "cpe": ""
+                },
+                "1352": {
+                  "state": "filtered",
+                  "reason": "no-response",
+                  "name": "lotusnotes",
+                  "product": "",
+                  "version": "",
+                  "extrainfo": "",
+                  "conf": "3",
+                  "cpe": ""
+                },
+                "1433": {
+                  "state": "filtered",
+                  "reason": "no-response",
+                  "name": "ms-sql-s",
+                  "product": "",
+                  "version": "",
+                  "extrainfo": "",
+                  "conf": "3",
+                  "cpe": ""
+                },
+                "1723": {
+                  "state": "filtered",
+                  "reason": "no-response",
+                  "name": "pptp",
+                  "product": "",
+                  "version": "",
+                  "extrainfo": "",
+                  "conf": "3",
+                  "cpe": ""
+                },
+                "3306": {
+                  "state": "filtered",
+                  "reason": "no-response",
+                  "name": "mysql",
+                  "product": "",
+                  "version": "",
+                  "extrainfo": "",
+                  "conf": "3",
+                  "cpe": ""
+                },
+                "3389": {
+                  "state": "filtered",
+                  "reason": "no-response",
+                  "name": "ms-wbt-server",
+                  "product": "",
+                  "version": "",
+                  "extrainfo": "",
+                  "conf": "3",
+                  "cpe": ""
+                },
+                "5432": {
+                  "state": "filtered",
+                  "reason": "no-response",
+                  "name": "postgresql",
+                  "product": "",
+                  "version": "",
+                  "extrainfo": "",
+                  "conf": "3",
+                  "cpe": ""
+                },
+                "6667": {
+                  "state": "filtered",
+                  "reason": "no-response",
+                  "name": "irc",
+                  "product": "",
+                  "version": "",
+                  "extrainfo": "",
+                  "conf": "3",
+                  "cpe": ""
+                },
+                "27015": {
+                  "state": "filtered",
+                  "reason": "no-response",
+                  "name": "",
+                  "product": "",
+                  "version": "",
+                  "extrainfo": "",
+                  "conf": "",
+                  "cpe": ""
+                },
+                "27030": {
+                  "state": "filtered",
+                  "reason": "no-response",
+                  "name": "",
+                  "product": "",
+                  "version": "",
+                  "extrainfo": "",
+                  "conf": "",
+                  "cpe": ""
+                }
+              }
+            }
+          }
+        }
+      ]
+}

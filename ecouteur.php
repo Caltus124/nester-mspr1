@@ -1,4 +1,6 @@
 <?php
+ini_set('post_max_size', '500M');
+ini_set('upload_max_filesize', '500M');
 // Adresse IP et port à écouter
 $address = '0.0.0.0';
 $port = 55000;
@@ -46,7 +48,7 @@ try {
         echo "Connexion acceptée.\n";
 
         // Lire les données envoyées par le client
-        $input = socket_read($clientSocket, 1024);
+        $input = socket_read($clientSocket, 108192);
         if ($input === false) {
             echo "Erreur lors de la lecture des données : " . socket_strerror(socket_last_error()) . "\n";
             continue;
@@ -63,6 +65,7 @@ try {
             $machineName = $systemInfo['machine_name'];
             $osInfo = $systemInfo['os_info'];
             $ipAddress = $systemInfo['ip_address'];
+            $mac_address = $systemInfo['mac_address'];
             $currentTimeUTC = time();
 
             // Vérifier si le nom de la machine existe déjà dans la table system_info
@@ -72,8 +75,8 @@ try {
 
             if (!$machineId) {
                 // Le nom n'existe pas, insérer une nouvelle ligne dans la table system_info
-                $stmt = $db->prepare("INSERT INTO system_info (machine_name, os_info, ip_address, status_machine, date_time) VALUES (:machine_name, :os_info, :ip_address, 'disable', :date_time)");
-                $stmt->execute([':machine_name' => $machineName, ':os_info' => $osInfo, ':ip_address' => $ipAddress, ':date_time' => time()]);
+                $stmt = $db->prepare("INSERT INTO system_info (machine_name, os_info, ip_address, status_machine, date_time, mac_address) VALUES (:machine_name, :os_info, :ip_address, 'enable', :date_time, :mac_address)");
+                $stmt->execute([':machine_name' => $machineName, ':os_info' => $osInfo, ':ip_address' => $ipAddress, ':date_time' => time(), ':mac_address' => $mac_address]);
                 // Récupérer l'ID de la machine nouvellement insérée
                 $machineId = $db->lastInsertId();
             }
@@ -111,13 +114,84 @@ try {
         if (isset($data['network_host'])) {
             foreach ($data['network_host'] as $networkHost) {
                 $timestamp = $networkHost['timestamp'];
-                foreach ($networkHost['hosts'] as $host) {
-                    $stmt = $db->prepare("INSERT INTO network_host (machine_id, date_time, host) VALUES (:machine_id, :date_time, :host)");
-                    $stmt->execute([':machine_id' => $machineId, ':date_time' => time(), ':host' => $host]);
+                $receivedHosts = $networkHost['hosts'];
+        
+                // Récupérer les hôtes enregistrés dans la base de données pour cette machine
+                $existingHostsStmt = $db->prepare("SELECT host FROM network_host WHERE machine_id = :machine_id");
+                $existingHostsStmt->execute([':machine_id' => $machineId]);
+                $existingHosts = $existingHostsStmt->fetchAll(PDO::FETCH_COLUMN);
+        
+                // Ajouter les nouveaux hôtes et supprimer ceux qui ne sont plus dans les données reçues
+                foreach ($receivedHosts as $host) {
+                    if (!in_array($host, $existingHosts)) {
+                        // Ajouter l'hôte s'il n'existe pas déjà dans la base de données
+                        $insertStmt = $db->prepare("INSERT INTO network_host (machine_id, date_time, host) VALUES (:machine_id, :date_time, :host)");
+                        $insertStmt->execute([':machine_id' => $machineId, ':date_time' => time(), ':host' => $host]);
+                    }
+                }
+        
+                // Supprimer les hôtes qui ne sont plus dans les données reçues
+                foreach ($existingHosts as $existingHost) {
+                    if (!in_array($existingHost, $receivedHosts)) {
+                        // Supprimer l'hôte de la base de données
+                        $deleteStmt = $db->prepare("DELETE FROM network_host WHERE machine_id = :machine_id AND host = :host");
+                        $deleteStmt->execute([':machine_id' => $machineId, ':host' => $existingHost]);
+                    }
                 }
             }
         }
 
+        if (isset($data['tcp_port'])) {
+            $ipAddress = $data['system_info'][0]['ip_address']; // Récupérer l'adresse IP de system_info
+        
+            // Récupérer les ports déjà présents dans la base de données pour cette adresse IP
+            $existingPortsStmt = $db->prepare("SELECT port FROM tcp_port WHERE machine_id = :machine_id AND ip_address = :ip_address");
+            $existingPortsStmt->execute([':machine_id' => $machineId, ':ip_address' => $ipAddress]);
+            $existingPorts = $existingPortsStmt->fetchAll(PDO::FETCH_COLUMN);
+        
+            foreach ($data['tcp_port'][0]['scan']['192.168.1.1']['tcp'] as $portNumber => $portInfo) {
+                // Récupérer les informations sur le port TCP
+                $state = $portInfo['state'];
+                $reason = $portInfo['reason'];
+                $name = $portInfo['name'];
+                $product = $portInfo['product'];
+                $version = $portInfo['version'];
+                $extrainfo = $portInfo['extrainfo'];
+                $conf = $portInfo['conf'];
+                $cpe = $portInfo['cpe'];
+        
+                // Vérifier si le port existe déjà dans la base de données
+                if (!in_array($portNumber, $existingPorts)) {
+                    // Insérer les données dans la table tcp_port
+                    $stmt = $db->prepare("INSERT INTO tcp_port (machine_id, ip_address, port, state_tcp, reason, name_tcp, product, version_tcp, extrainfo, conf, cpe) 
+                        VALUES (:machine_id, :ip_address, :port, :state_tcp, :reason, :name_tcp, :product, :version_tcp, :extrainfo, :conf, :cpe)");
+                    $stmt->execute([
+                        ':machine_id' => $machineId,
+                        ':ip_address' => $ipAddress,
+                        ':port' => $portNumber,
+                        ':state_tcp' => $state,
+                        ':reason' => $reason,
+                        ':name_tcp' => $name,
+                        ':product' => $product,
+                        ':version_tcp' => $version,
+                        ':extrainfo' => $extrainfo,
+                        ':conf' => $conf,
+                        ':cpe' => $cpe
+                    ]);
+                }
+            }
+        
+            // Supprimer les ports qui ne sont plus dans les données JSON
+            foreach ($existingPorts as $existingPort) {
+                if (!array_key_exists($existingPort, $data['tcp_port'][0]['scan']['192.168.1.1']['tcp'])) {
+                    // Supprimer le port de la base de données
+                    $deleteStmt = $db->prepare("DELETE FROM tcp_port WHERE machine_id = :machine_id AND ip_address = :ip_address AND port = :port");
+                    $deleteStmt->execute([':machine_id' => $machineId, ':ip_address' => $ipAddress, ':port' => $existingPort]);
+                }
+            }
+        }
+        
+        
         // Fermer le socket client
         socket_close($clientSocket);
     }
