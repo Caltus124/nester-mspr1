@@ -42,12 +42,6 @@ $user = $_SESSION['user'];
               <span class="line"></span>
             </div>
             <li class="item">
-              <a href="home.php?page=information" class="link flex">
-                <i class="bx bx-home-alt"></i>
-                <span>Informations</span>
-              </a>
-            </li>
-            <li class="item">
               <a href="home.php?page=agents" class="link flex">
                 <i class='bx bx-map-alt' ></i>
                 <span>Agents</span>

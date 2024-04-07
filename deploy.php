@@ -149,15 +149,40 @@
                 switch ($system) {
                     case 'windows':
                         // Commande pour Windows
-                        $command = 'agent.exe --add-server ' . $server_address;
+                        $command = <<<EOL
+                        curl https://seahawks.etienne26.fr/download/seahawks.tar
+                        tar seahawks.tar
+                        cd seahawks
+                        ./install.bat
+                        EOL;
                         break;
                     case 'linux':
                         // Commande pour Linux
-                        $command = 'sudo agent-auth -m ' . $server_address;
+                        $command = <<<EOL
+                        sudo apt update
+                        sudo apt install wget
+                        wget https://seahawks.etienne26.fr/download/seahawks.tar
+                        gzip seahawks.tar
+                        cd seahawks
+                        sudo apt install python3-pip
+                        sudo pip install -r requirements.txt
+                        sudo mkdir /etc/seahawks
+                        sudo cp module/* /etc/seahawks
+                        EOL;
                         break;
                     case 'mac':
                         // Commande pour Mac OS
-                        $command = 'sudo agent-auth -m ' . $server_address;
+                        $command = <<<EOL
+                        sudo apt update
+                        sudo apt install wget
+                        wget https://seahawks.etienne26.fr/download/seahawks.tar
+                        gzip seahawks.tar
+                        cd seahawks
+                        sudo apt install python3-pip
+                        sudo pip install -r requirements.txt
+                        sudo mkdir /etc/seahawks
+                        sudo cp module/* /etc/seahawks
+                        EOL;
                         break;
                     default:
                         // Message d'erreur si le système n'est pas reconnu
@@ -173,14 +198,25 @@
 
         <!-- Step 4: Start the agent -->
         <?php if(isset($_POST['system']) && isset($_POST['server_address'])): ?>
-        <div class="step">
+            <div class="step">
             <h2 class="step-title">Step 4: Start the Agent</h2>
             <p class="step-description">Once the installation is complete, use the following command to start the agent:</p>
             <div class="step-form">
-                <pre><code>sudo system [command to start the agent]</code></pre>
+                <?php
+                $system = $_POST['system'];
+                $server_address = $_POST['server_address'];
+                if ($system === 'linux' || $system === 'mac') {
+                    echo "<pre><code>sudo python3 /etc/seahawks/visualizer.py $server_address</code></pre>";
+                } elseif ($system === 'windows') {
+                    echo "<pre><code>python3 \"c:\\program files\\seahawks\\visualizer.py\" <br>.\Desktop\\seahawks.bat $server_address</code></pre>";
+                } else {
+                    echo "<pre><code>Error: Unsupported system.</code></pre>";
+                }
+                ?>
             </div>
         </div>
         <?php endif; ?>
+
     </div>
 </body>
 </html>
