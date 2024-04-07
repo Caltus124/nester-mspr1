@@ -226,6 +226,56 @@
     <div class="chart-container2">
         <canvas id="cpu" width="200" height="80%"></canvas>
     </div>
+    <h1>Host dans le meme réseaux</h1>
+    <div class="container_port">
+        <?php
+        $query_port = $db2->prepare("SELECT host FROM network_host WHERE machine_id = :machine_id");
+        $query_port->execute([':machine_id' => $machine_id]);
+        $ports = $query_port->fetchAll(PDO::FETCH_COLUMN);
+
+        // Afficher les ports dans des carrés
+        foreach ($ports as $port) {
+            echo "<a class='host-box'>$port</a>";
+        }
+        ?>
+    </div>
+    <h1>Port ouvert</h1>
+    <div class="container_port">
+    <?php
+        $query_port = $db2->prepare("SELECT port FROM tcp_port WHERE machine_id = :machine_id");
+        $query_port->execute([':machine_id' => $machine_id]);
+        $ports = $query_port->fetchAll(PDO::FETCH_COLUMN);
+
+        // Afficher les ports dans des carrés
+        foreach ($ports as $port) {
+            echo "<a href='https://www.speedguide.net/port.php?port=$port' target='_blank' class='port-box'>$port</a>";
+        }
+    ?>
+    </div>
+
+    <?php
+    $query_name_tcp = $db2->prepare("SELECT * FROM tcp_port WHERE machine_id = :machine_id");
+    $query_name_tcp->execute([':machine_id' => $machine_id]);
+    $ports_list = $query_name_tcp->fetchAll(PDO::FETCH_ASSOC);
+
+    foreach ($ports_list as $port) {
+        echo "<div class='container_port'>";
+        echo "<a href='https://www.speedguide.net/port.php?port={$port['port']}' target='_blank' class='port-box'>{$port['port']}</a>";
+    
+        // Vérifier si name_tcp est vide et afficher "N/A" si c'est le cas
+        $name_tcp = !empty($port['name_tcp']) ? $port['name_tcp'] : "N/A";
+        echo "<a class='port-box-name'>$name_tcp</a>";
+    
+        // Vérifier si state_tcp est "open" et définir la couleur du texte en conséquence
+        $state_color = ($port['state_tcp'] === 'open') ? 'green' : 'orange';
+        echo "<a class='port-box-name' style='color: $state_color;'>{$port['state_tcp']}</a>";
+    
+        echo "<a class='port-box-name'>{$port['reason']}</a>";
+        echo "</div>";
+    }
+    ?>
+
+
     <script>
     //////////////////////////////////////////////
     var storageUsage = <?php echo $storage_percent; ?>;
@@ -545,6 +595,27 @@
             margin-left: 270px;
             overflow-x: hidden;
         }
+
+        .port-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .port-card {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        .port-card label {
+            font-weight: bold;
+        }
+
         .progress-bar {
             margin-bottom: 20px;
         }
@@ -587,6 +658,62 @@
             justify-content: space-around;
             align-items: center;
             background-color: #ffff;
+        }
+        .container_port {
+            max-width: 90%;
+            margin: 50px auto;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: flex-start;
+            background-color: #ffff;
+        }
+
+        .port-box {
+            width: 100px;
+            height: 100px;
+            margin: 10px;
+            border: 1px solid #ccc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 20px;
+            text-decoration: none;
+            background-color: #4070f4; /* Couleur bleue */
+            color: white; /* Texte en blanc */
+        }
+
+        .port-box-name {
+            width: 200px;
+            height: 100px;
+            margin: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 20px;
+            text-decoration: none;
+            color: black; /* Texte en blanc */
+        }
+
+        .host-box {
+            width: 200px;
+            height: 100px;
+            margin: 10px;
+            border: 1px solid #ccc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 20px;
+            text-decoration: none;
+            background-color: #4070f4; /* Couleur bleue */
+            color: white; /* Texte en blanc */
+        }
+
+        .port-box:hover {
+            cursor: pointer; /* Curseur main au survol */
+            background-color: blue;
         }
 
         .agent-info p {

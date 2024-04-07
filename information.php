@@ -10,12 +10,12 @@
             background-color: #f0f0f0;
             margin: 0;
             padding: 0;
+            margin-left: 270px;
         }
         .container {
             display: flex;
             justify-content: space-around;
             margin-top: 50px;
-            margin-left: 270px;
         }
         .box {
             width: 30%;
@@ -71,6 +71,10 @@
 
         // Fermer la connexion à la base de données
         $db->close();
+        ?>
+    </div>
+    <div class="container">
+        <?php
         ?>
     </div>
 </body>
