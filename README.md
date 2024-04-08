@@ -1,5 +1,10 @@
 # nester server
 
+<p align="center">
+  <img src="images/info.png">
+</p>
+
+
 ## Building Dockerfile
 
 ```
