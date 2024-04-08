@@ -9,7 +9,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
 </head>
 <body>
-    <h1>Informations de l'agent</h1>
+    <h1>Agent information</h1>
     <div class="container">
         <!-- Utilisation des variables PHP pour afficher les informations de l'agent -->
         <div class="agent-info">
@@ -226,7 +226,7 @@
     <div class="chart-container2">
         <canvas id="cpu" width="200" height="80%"></canvas>
     </div>
-    <h1>Host dans le meme réseaux</h1>
+    <h1>Host in the same network</h1>
     <div class="container_port">
         <?php
         $query_port = $db2->prepare("SELECT host FROM network_host WHERE machine_id = :machine_id");
@@ -239,7 +239,7 @@
         }
         ?>
     </div>
-    <h1>Port ouvert</h1>
+    <h1>Open port</h1>
     <div class="container_port">
     <?php
         $query_port = $db2->prepare("SELECT port FROM tcp_port WHERE machine_id = :machine_id");
