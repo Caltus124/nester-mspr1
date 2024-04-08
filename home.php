@@ -87,7 +87,7 @@ $user = $_SESSION['user'];
                         echo '<li class="item">';
                         echo '<a href="home.php?page=user" class="link flex">';
                         echo '<i class="bx bx-folder"></i>';
-                        echo '<span>Utilisateurs</span>';
+                        echo '<span>Users</span>';
                         echo '</a>';
                         echo '</li>';
                     }
@@ -118,7 +118,7 @@ $user = $_SESSION['user'];
           </ul>
         </div>
         <div class="sidebar_profile flex">
-          <span class="nav_image">
+          <span class="nav_image white-background">
             <img src="images/user.png" />
           </span>
           <div class="data_text">
@@ -140,8 +140,8 @@ $user = $_SESSION['user'];
       $id = isset($_GET['id']) ? $_GET['id'] : null;
 
       // Si un paramètre "id" est présent dans l'URL, inclure la page details_ticket.php
-      if ($id !== null && file_exists($pagesDirectory . 'information.php')) {
-          include($pagesDirectory . 'information.php');
+      if ($id !== null && file_exists($pagesDirectory . 'agents.php')) {
+          include($pagesDirectory . 'agents.php');
       } else {
           // Si "id" n'est pas présent ou si la page details_ticket.php n'existe pas,
           // vérifier si la page demandée existe
@@ -198,6 +198,10 @@ body {
   object-fit: cover;
 }
 
+.white-background {
+    filter: brightness(0) invert(1);
+}
+
 /* Sidebar */
 .sidebar {
   position: fixed;
@@ -205,7 +209,7 @@ body {
   left: 0;
   height: 100%;
   width: 270px;
-  background: #fff;
+  background: #052757;
   padding: 15px 10px;
   box-shadow: 0 0 2px rgba(0, 0, 0, 0.1);
   transition: all 0.4s ease;
@@ -218,7 +222,7 @@ body {
 }
 .logo_name {
   font-size: 22px;
-  color: #333;
+  color: #fff;
   font-weight: 500px;
   transition: all 0.3s ease;
 }
@@ -260,6 +264,7 @@ body {
 .menu_title .title {
   margin-left: 15px;
   transition: all 0.3s ease;
+  color: #fff;
 }
 .sidebar.close .title {
   opacity: 0;
@@ -287,11 +292,11 @@ body {
   text-decoration: none;
   border-radius: 8px;
   margin-bottom: 8px;
-  color: #707070;
+  color: #fff;
 }
 .link:hover {
   color: #fff;
-  background-color: #4070f4;
+  background-color: #084191;
 }
 .link span {
   white-space: nowrap;
@@ -314,7 +319,7 @@ body {
 }
 .sidebar_profile .name {
   font-size: 18px;
-  color: #333;
+  color: #fff;
 }
 .sidebar_profile .email {
   font-size: 15px;

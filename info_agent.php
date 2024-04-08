@@ -164,7 +164,7 @@
             }
             ?>
             <!-- PHP code ends here -->
-            <p style="color: #4070f4;"><?php echo $agentIP; ?></p>
+            <p style="color: #052757;"><?php echo $agentIP; ?></p>
             <p><?php echo $agentNom; ?></p>
             <p style="color: gray; font-size: 1em;"><?php echo $mac_address; ?></p>
             <!-- Ajouter d'autres informations si nécessaire -->
@@ -604,7 +604,7 @@
             box-sizing: border-box;
         }
         .port-card {
-            background-color: #f9f9f9;
+            background-color: #052757;
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -681,7 +681,7 @@
             align-items: center;
             font-size: 20px;
             text-decoration: none;
-            background-color: #4070f4; /* Couleur bleue */
+            background-color: #052757; /* Couleur bleue */
             color: white; /* Texte en blanc */
         }
 
@@ -707,13 +707,13 @@
             align-items: center;
             font-size: 20px;
             text-decoration: none;
-            background-color: #4070f4; /* Couleur bleue */
-            color: white; /* Texte en blanc */
+            background-color: #052757; 
+            color: white;
         }
 
         .port-box:hover {
             cursor: pointer; /* Curseur main au survol */
-            background-color: blue;
+            background-color: #084191;
         }
 
         .agent-info p {

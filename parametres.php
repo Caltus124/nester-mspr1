@@ -131,7 +131,7 @@ if (isset($_GET['stop_listener'])) {
         input[type="submit"], button{
             display: block;
             padding: 10px;
-            background-color: #4070f4;
+            background-color: #052757;
             color: #fff;
             border: none;
             border-radius: 5px;
@@ -140,7 +140,7 @@ if (isset($_GET['stop_listener'])) {
         }
 
         input[type="submit"]:hover, button:hover {
-            background-color: #0056b3;
+            background-color: #084191;
         }
 
         .result-message {
@@ -203,30 +203,30 @@ if (isset($_GET['stop_listener'])) {
 <body>
 
 <div class="form-container">
-    <h1>Modifier le Mot de Passe</h1>
+    <h1>Change Password</h1>
 
     <form action="home.php?page=parametres" method="post">
-    <label for="ancien_mot_de_passe">Ancien mot de passe :</label>
+    <label for="ancien_mot_de_passe">Old password:</label>
     <input type="password" name="ancien_mot_de_passe" id="ancien_mot_de_passe" required>
     <br>
-    <label for="nouveau_mot_de_passe">Nouveau mot de passe :</label>
+    <label for="nouveau_mot_de_passe">New password:</label>
     <input type="password" name="nouveau_mot_de_passe" id="nouveau_mot_de_passe" required>
     <br>
-    <label for="confirmer_mot_de_passe">Confirmer le nouveau mot de passe :</label>
+    <label for="confirmer_mot_de_passe">Confirm new password:</label>
     <input type="password" name="confirmer_mot_de_passe" id="confirmer_mot_de_passe" required>
     <br>
     <?php if (!empty($message)) : ?>
-        <p class="message <?php echo (strpos($message, "Mot de passe mis à jour avec succès") !== false) ? 'success' : 'error'; ?>">
+        <p class="message <?php echo (strpos($message, "Password successfully updated") !== false) ? 'success' : 'error'; ?>">
             <?php echo $message; ?>
         </p>
     <?php endif; ?>
-    <input type="submit" value="Modifier le mot de passe">
+    <input type="submit" value="Change password">
 </form>
 
-<h1>Gestion de l'écouteur</h1>
+<h1>Receiver management</h1>
 <form action="start_listener.php" method="get">
     <input type="hidden" name="start_listener" value="true">
-    <input type="submit" value="Restart écouteur">
+    <input type="submit" value="Restart">
 </form>
 
 <?php
@@ -245,21 +245,21 @@ if (isset($_SESSION['user'])) {
     // Vérifier si la requête a réussi et si le statut est 'admin'
     if ($userData && $userData['status'] === 'admin') {
         // L'utilisateur est un administrateur, affichez le lien "Utilisateurs"
-        echo '<h1 style="color: red;">Zone dangereuse</h1>';
+        echo '<h1 style="color: red;">Danger zone</h1>';
 
         echo '<form action="create_user_db.php" method="get">';
-        echo '<p>Base de données des users</p><br>';
-        echo '<button type="submit" class="btn-red">Supprimer</button>';
+        echo '<p>User database</p><br>';
+        echo '<button type="submit" class="btn-red">Delete</button>';
         echo '</form><br>';
         
         echo '<form action="create_scan_db.php" method="get">';
-        echo '<p>Base de données des scans</p><br>';
-        echo '<button type="submit" class="btn-red">Supprimer</button>';
+        echo '<p>Scan database</p><br>';
+        echo '<button type="submit" class="btn-red">Delete</button>';
         echo '</form><br>';
 
         echo '<form action="check_db.php" method="get" target="_blank">';
-        echo '<p>Vérifier la base de donnée</p><br>';
-        echo '<button type="submit" class="btn-red">Vérifier</button>';
+        echo '<p>Check database</p><br>';
+        echo '<button type="submit" class="btn-red">Check</button>';
         echo '</form><br>';
     }
 

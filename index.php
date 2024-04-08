@@ -30,10 +30,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_SESSION['user'] = $user['username'];
 
         // Redirigez l'utilisateur vers la page d'accueil
-        header("Location: home.php");
+        header("Location: home.php?page=agents");
         exit();
     } else {
-        $error_message = 'Nom d\'utilisateur ou mot de passe incorrect.';
+        $error_message = 'Incorrect username or password.';
     }
 
     $database->close();
@@ -53,24 +53,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body>
     <form action="./index.php" method="post" autocomplete="off">
         <h2>Login</h2><br>
-        <label for="username">Nom d'utilisateur :</label>
+        <label for="username">Username:</label>
         <input type="text" id="username" name="username" required autocomplete="off"><br>
 
-        <label for="password">Mot de passe :</label>
+        <label for="password">Password:</label>
         <input type="password" id="password" name="password" required><br>
         <?php
         if (isset($error_message)) {
             echo '<p style="color: red; margin-bottom: 30px;">' . $error_message . '</p>';
         }
         ?>
-        <input type="submit" value="Connexion">
+        <input type="submit" value="Login">
         <?php
         // Vérifier si le paramètre error est défini et égal à 2 (erreur d'identifiant ou de mot de passe incorrect)
         if (isset($_GET['error']) && $_GET['error'] == 1) {
-            echo '<p style="color: red;">Vous vous n\'êtes pas administrateur</p>';
+            echo '<p style="color: red;">You are not an administrator</p>';
         }
         if (isset($_GET['error']) && $_GET['error'] == 2) {
-            echo '<p style="color: red;">Identifiant ou mot de passe incorrect</p>';
+            echo '<p style="color: red;">Incorrect login or password</p>';
         }
         ?>
     </form>
@@ -94,13 +94,17 @@ h2 {
 /* Style de base pour le corps de la page */
 body {
     font-family: Arial, sans-serif;
-    background-color: #eef5fe;
+    background-image: url('images/background.png');
+    background-size: cover; 
+    background-repeat: no-repeat;
+    background-position: center; 
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
     margin: 0;
 }
+
 
 /* Style du formulaire */
 form {
@@ -132,7 +136,7 @@ input[type="password"] {
 
 /* Style du bouton de soumission */
 input[type="submit"] {
-    background-color: #007BFF;
+    background-color: #052757;
     color: #fff;
     border: none;
     padding: 10px 20px;
@@ -140,6 +144,10 @@ input[type="submit"] {
     font-size: 16px;
     cursor: pointer;
     margin-bottom: 15px;
+}
+
+input[type="submit"]:hover {
+    background-color: #084191;
 }
 
 /* Style du lien "S'inscrire" */

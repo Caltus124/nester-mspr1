@@ -32,7 +32,7 @@
         }
         .step-title {
             font-size: 24px;
-            color: #4070f4;
+            color: #052757;
             margin-bottom: 20px;
         }
         .step-description {
@@ -82,13 +82,16 @@
         }
         .step-form input[type="submit"] {
             padding: 10px 30px;
-            background-color: #4070f4;
+            background-color: #052757;
             color: #fff;
             border: none;
             border-radius: 5px;
             cursor: pointer;
             transition: background-color 0.3s ease;
             margin-top: 50px;
+        }
+        .step-form input[type="submit"]:hover {
+            background-color: #084191;
         }
         code {
             background-color: #eee;

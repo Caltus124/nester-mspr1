@@ -114,55 +114,99 @@
     </style>
 </head>
 <body>
-    <div class="container">
-        <?php
+    <?php
         // Connexion à la base de données SQLite
-        $db = new SQLite3('database/nester.db');
+        $db_path = 'database/nester.db';
 
-        // Requête pour obtenir le nombre total d'agents
-        $total_agents_query = $db->query("SELECT COUNT(*) AS total_agents FROM system_info");
-        $total_agents_row = $total_agents_query->fetchArray(SQLITE3_ASSOC);
-        $total_agents = $total_agents_row['total_agents'];
+        try {
+            // Connexion à la base de données SQLite
+            $db = new PDO('sqlite:' . $db_path);
+            $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-        // Requête pour obtenir le nombre d'agents activés
-        $enabled_agents_query = $db->query("SELECT COUNT(*) AS enabled_agents FROM system_info WHERE status_machine = 'enable'");
-        $enabled_agents_row = $enabled_agents_query->fetchArray(SQLITE3_ASSOC);
-        $enabled_agents = $enabled_agents_row['enabled_agents'];
+            // Requête pour obtenir le nombre total d'agents
+            $total_agents_query = $db->query("SELECT COUNT(*) AS total_agents FROM system_info");
+            $total_agents_row = $total_agents_query->fetch(PDO::FETCH_ASSOC);
+            $total_agents = $total_agents_row['total_agents'];
 
-        // Calculer le nombre d'agents désactivés
-        $disabled_agents = $total_agents - $enabled_agents;
+            // Requête pour obtenir le nombre d'agents activés
+            $enabled_agents_query = $db->query("SELECT COUNT(*) AS enabled_agents FROM system_info WHERE status_machine = 'enable'");
+            $enabled_agents_row = $enabled_agents_query->fetch(PDO::FETCH_ASSOC);
+            $enabled_agents = $enabled_agents_row['enabled_agents'];
 
-        // Afficher les résultats dans des boîtes
-        echo "<div class='box'><h3>Total Agents</h3><p class='total'>$total_agents</p></div>";
-        echo "<div class='box'><h3>Enabled Agents</h3><p class='enabled'>$enabled_agents</p></div>";
-        echo "<div class='box'><h3>Disabled Agents</h3><p class='disabled'>$disabled_agents</p></div>";
+            // Calculer le nombre d'agents désactivés
+            $disabled_agents = $total_agents - $enabled_agents;
+            
+            // Récupérer le statut à partir de la requête GET
+            $status = isset($_GET['status']) ? $_GET['status'] : 'all';
+            switch ($status) {
+                case 'all':
+                    $title = "Agents all";
+                    break;
+                case 'enable':
+                    $title = "Agents enabled";
+                    break;
+                case 'disable':
+                    $title = "Agents disabled";
+                    break;
+                default:
+                    $title = "Agents list";
+                    break;
+            }
 
-        // Fermer la connexion à la base de données
-        $db->close();
-        ?>
-    </div>
-    <h1>Agents liste</h1>
-    <div id="machineList"></div>
+            // Afficher les résultats dans des boîtes
+            echo "<div class='container'>";
+            echo "<div class='box'><a href='?page=agents&status=all'><h3>Total Agents</h3><p class='total'>$total_agents</p></a></div>";
+            echo "<div class='box'><a href='?page=agents&status=enable'><h3>Enabled Agents</h3><p class='enabled'>$enabled_agents</p></a></div>";
+            echo "<div class='box'><a href='?page=agents&status=disable'><h3>Disabled Agents</h3><p class='disabled'>$disabled_agents</p></a></div>";
+            echo "</div>";
+            echo "<h1>$title</h1>";
 
-    <script>
-        // Fonction pour charger les données de la base de données via AJAX
-        function loadMachineList() {
-            $.ajax({
-                url: './AJAX/load_machines.php',
-                type: 'GET',
-                success: function(data) {
-                    $('#machineList').html(data);
-                },
-                error: function(xhr, status, error) {
-                    console.error('Erreur lors du chargement des données:', status, error);
+            // Modifier la requête SQL en fonction du statut
+            if ($status === 'all') {
+                $query = $db->query('SELECT * FROM system_info');
+            } else {
+                $query = $db->prepare('SELECT * FROM system_info WHERE status_machine = :status');
+                $query->execute(['status' => $status]);
+            }
+
+            // Boucle pour récupérer les données et les afficher
+            while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
+                $agentId = $row['id'];
+                $status = $row['status_machine'];
+                $dotColorClass = ($status == 'disable') ? 'red-dot' : 'green-dot';
+                echo "<a href='home.php?page=info_agent&ids=$agentId' class='agent-link'>";
+                echo "<div class='machine-container'>";
+                echo "<div class='machine-info'><div class='text'>{$row['machine_name']}</div></div>";
+                echo "<div class='machine-info'><div class='text'>{$row['ip_address']}</div></div>";
+                // Ajouter l'image du logo de l'OS en fonction du type d'OS
+                $os_logo_path = getOsLogoPath($row['os_info']);
+                if ($os_logo_path) {
+                    echo "<div class='machine-info'><img src='{$os_logo_path}' alt='Logo OS' class='machine-image'></div>";
                 }
-            });
-        }
+                echo "<div class='machine-info'><div class='text $dotColorClass'>.</div></div>";
+                echo "</div>";
+                echo "</a>";
+            }
+            } catch (PDOException $e) {
+            // En cas d'erreur, affichage du message d'erreur
+            echo 'Erreur : ' . $e->getMessage();
+            }
 
-        // Charger les données initiales lors du chargement de la page
-        $(document).ready(function() {
-            loadMachineList();
-        });
-    </script>
+
+        // Fonction pour obtenir le chemin d'accès au logo de l'OS en fonction du type d'OS
+        function getOsLogoPath($type_os) {
+            switch ($type_os) {
+                case 'Windows':
+                    return './images/windows_logo.png';
+                case 'Linux':
+                    return './images/linux_logo.png';
+                case 'Darwin':
+                    return './images/macos_logo.png';
+                default:
+                    return '';
+            }
+        }
+        ?>
+
 </body>
 </html>

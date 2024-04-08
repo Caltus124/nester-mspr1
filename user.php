@@ -140,12 +140,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     .modifier-btn {
-        background-color: #28a745;
+        background-color: #052757;
         color: #fff;
     }
 
     .modifier-btn:hover {
-        background-color: #1e7e34;
+        background-color: #084191;
     }
 
     .supprimer-btn {
@@ -203,7 +203,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     #btn {
-        background-color: #4070f4;
+        background-color: #052757;
         color: #fff;
         padding: 10px 15px;
         border: none;
@@ -213,7 +213,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     #bts:hover {
-        background-color: #0056b3;
+        background-color: #084191;
     }
     .status-dot {
         width: 10px;

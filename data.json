@@ -12,9 +12,9 @@
                 "used": 10122203136,
                 "free": 19832930304
             },
-            "machine_name": "pc-lol2",
-            "os_info": "Windows",
-            "ip_address": "192.168.1.242",
+            "machine_name": "ubuntu-server",
+            "os_info": "Linux",
+            "ip_address": "192.168.1.56",
             "mac_address": "3a:74:e9:d2:a4:49"
         }
     ],
