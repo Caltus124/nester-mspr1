@@ -4,7 +4,7 @@
 Build Dockerfile
 
 ```
-sudo docker build -t nester:1.0.0 - < sample.Dockerfile
+sudo docker build -t nester:1.0.0 - < Dockerfile
 sudo docker run -d -p 8000:80 -p 55000:55000 nester:1.0.0
 ```
 
