@@ -24,3 +24,10 @@ Docker shell
 ```
 docker exec -it ID /bin/bash
 ```
+
+Activer l'écouteur et le keepalive dans le docker
+
+```
+pm2 start /var/www/html/ecouteur.php --name ecouteur --no-autorestart --user root
+pm2 start /var/www/html/keepalive.php --name keepalive --no-autorestart --user root
+```

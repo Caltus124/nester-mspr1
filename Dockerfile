@@ -4,6 +4,9 @@ FROM php:7.4-apache
 # Mettre à jour le gestionnaire de paquets et installer git
 RUN apt-get update && apt-get install -y git
 
+# Activer l'extension PHP Sockets
+RUN docker-php-ext-install sockets
+
 # Installer Node.js et npm
 RUN curl -fsSL https://deb.nodesource.com/setup_16.x | bash -
 RUN apt-get install -y nodejs
