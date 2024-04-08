@@ -18,3 +18,9 @@ Password: admin
 
 
 API Port: 55000
+
+Docker shell
+
+```
+docker exec -it ID /bin/bash
+```

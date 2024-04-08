@@ -26,6 +26,6 @@ EXPOSE 80
 # Démarrez Apache en mode foreground au démarrage du conteneur
 CMD ["apache2ctl", "-D", "FOREGROUND"]
 
-# Démarrer les fichiers avec PM2 sans redémarrage automatique
-RUN pm2 start /var/www/html/ecouteur.php --name ecouteur --no-autorestart
-RUN pm2 start /var/www/html/keepalive.php --name keepalive --no-autorestart
+# Démarrer les fichiers avec PM2 sans redémarrage automatique en tant qu'utilisateur root
+RUN pm2 start /var/www/html/ecouteur.php --name ecouteur --no-autorestart --user root
+RUN pm2 start /var/www/html/keepalive.php --name keepalive --no-autorestart --user root
