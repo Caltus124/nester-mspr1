@@ -48,7 +48,7 @@ try {
         echo "Connexion acceptée.\n";
 
         // Lire les données envoyées par le client
-        $input = socket_read($clientSocket, 108192);
+        $input = socket_read($clientSocket, 10008192);
         if ($input === false) {
             echo "Erreur lors de la lecture des données : " . socket_strerror(socket_last_error()) . "\n";
             continue;
